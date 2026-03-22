@@ -7,8 +7,8 @@
    2. WEBHOOK_FORM   -> URL del escenario "Formulario Factura" en Make
 ===================================================== */
 
-var WEBHOOK_CSF  = 'https://hook.us2.make.com/TU_WEBHOOK_LECTOR_CSF';
-var WEBHOOK_FORM = 'https://hook.us2.make.com/TU_WEBHOOK_FORMULARIO';
+var WEBHOOK_CSF  = 'https://hook.us2.make.com/mx2bsx1rtxf0n619c9w91sqy7d49gb19';
+var WEBHOOK_FORM = 'https://hook.us2.make.com/scr4cut77aypoff1uypc7hh8byby1kcn';
 
 /* =====================================================
    CATÁLOGO SAT
