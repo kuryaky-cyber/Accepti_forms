@@ -486,93 +486,141 @@ function mostrarCamposPago() {
   }
 }
 
-// ── ITEMS ───────────────────────────────────────────────────────────────────
+// ── ITEMS ────────────────────────────────────────────────────────────────────
 function addItem() {
   itemCount++;
   var n = itemCount;
   var cont = document.getElementById('items-container');
-  var div = document.createElement('div');
-  div.className = 'item-row';
-  div.id = 'item-'+n;
-  div.innerHTML =
-    '<div class="item-num">Concepto '+n+'</div>' +
-    (n > 1 ? '<button class="btn-del" onclick="removeItem('+n+')" title="Eliminar">\u2715</button>' : '') +
-    '<div class="item-fields" style="margin-top:8px">' +
-      // Clave SAT
-      '<div class="f full">' +
-        '<label>Clave SAT <span class="req">*</span></label>' +
-        '<div style="position:relative">' +
-          '<input type="text" id="clave_sat-'+n+'" placeholder="Buscar por nombre o clave..." autocomplete="off" oninput="buscarClaveSAT('+n+')">' +
-          '<div id="sat-drop-'+n+'" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--teal);border-top:none;border-radius:0 0 7px 7px;max-height:200px;overflow-y:auto;z-index:50;box-shadow:0 8px 20px rgba(0,0,0,.12)"></div>' +
-        '</div>' +
-        '<input type="hidden" id="clave_sat_code-'+n+'">' +
-        '<div class="hint">Mínimo 3 caracteres para buscar en el catálogo SAT</div>' +
-      '</div>' +
-      // Descripción
-      '<div class="f full">' +
-        '<label>Descripción <span class="req">*</span></label>' +
-        '<input type="text" id="desc-'+n+'" placeholder="Descripción del producto o servicio">' +
-      '</div>' +
-      // Cantidad
-      '<div class="f">' +
-        '<label>Cantidad <span class="req">*</span></label>' +
-        '<input type="number" id="cant-'+n+'" placeholder="1" min="0.01" step="0.01" value="1" oninput="calcItem('+n+')">' +
-      '</div>' +
-      // Precio
-      '<div class="f">' +
-        '<label>Precio unitario <span class="req">*</span></label>' +
-        '<input type="number" id="precio-'+n+'" placeholder="0.00" min="0" step="0.01" oninput="calcItem('+n+')">' +
-      '</div>' +
-      // IVA
-      '<div class="f">' +
-        '<label>IVA</label>' +
-        '<select id="iva-'+n+'" onchange="calcItem('+n+')">' +
-          '<option value="0.16">16%</option>' +
-          '<option value="0.08">8% (zona fronteriza)</option>' +
-          '<option value="0">0%</option>' +
-          '<option value="exento">Exento</option>' +
-        '</select>' +
-      '</div>' +
-      // Retención IVA
-      '<div class="f">' +
-        '<label>Retenci\u00f3n IVA</label>' +
-        '<select id="ret_iva-'+n+'" onchange="calcItem('+n+')">' +
-          '<option value="0">Sin retenci\u00f3n</option>' +
-          '<option value="0.1067">10.67%</option>' +
-          '<option value="0.04">4%</option>' +
-        '</select>' +
-      '</div>' +
-      // Retención ISR
-      '<div class="f">' +
-        '<label>Retenci\u00f3n ISR</label>' +
-        '<select id="ret_isr-'+n+'" onchange="calcItem('+n+')">' +
-          '<option value="0">Sin retenci\u00f3n</option>' +
-          '<option value="0.10">10%</option>' +
-          '<option value="0.0125">1.25%</option>' +
-        '</select>' +
-      '</div>' +
-      // IEPS
-      '<div class="f">' +
-        '<label>IEPS</label>' +
-        '<select id="ieps-'+n+'" onchange="calcItem('+n+')">' +
-          '<option value="0">Sin IEPS</option>' +
-          '<option value="0.08">8%</option>' +
-          '<option value="0.265">26.5%</option>' +
-          '<option value="0.30">30%</option>' +
-        '</select>' +
-      '</div>' +
-      // Total
-      '<div class="f">' +
-        '<label>Total a pagar</label>' +
-        '<input type="text" id="total-'+n+'" readonly style="background:#f0faf9;font-family:monospace;font-size:13px;font-weight:600;color:#007F76" placeholder="$0.00">' +
-      '</div>' +
-    '</div>';
-  cont.appendChild(div);
+
+  var row = document.createElement('div');
+  row.className = 'item-row';
+  row.id = 'item-' + n;
+
+  var badge = document.createElement('div');
+  badge.className = 'item-num';
+  badge.textContent = 'Concepto ' + n;
+  row.appendChild(badge);
+
+  if (n > 1) {
+    var delBtn = document.createElement('button');
+    delBtn.className = 'btn-del';
+    delBtn.title = 'Eliminar';
+    delBtn.innerHTML = '&#x2715;';
+    delBtn.setAttribute('onclick', 'removeItem(' + n + ')');
+    row.appendChild(delBtn);
+  }
+
+  var grid = document.createElement('div');
+  grid.className = 'item-fields';
+  grid.style.marginTop = '8px';
+
+  function addField(parentEl, cls, labelHTML, inputHTML) {
+    var f = document.createElement('div');
+    f.className = 'f' + (cls ? ' ' + cls : '');
+    f.innerHTML = labelHTML + inputHTML;
+    parentEl.appendChild(f);
+    return f;
+  }
+
+  // Clave SAT
+  var fSat = document.createElement('div');
+  fSat.className = 'f full';
+  fSat.innerHTML = '<label>Clave SAT <span class="req">*</span></label>';
+  var satWrap = document.createElement('div');
+  satWrap.style.position = 'relative';
+  var satInput = document.createElement('input');
+  satInput.type = 'text';
+  satInput.id = 'clave_sat-' + n;
+  satInput.placeholder = 'Buscar por nombre o clave...';
+  satInput.autocomplete = 'off';
+  (function(nn){ satInput.addEventListener('input', function(){ buscarClaveSAT(nn); }); })(n);
+  var satDrop = document.createElement('div');
+  satDrop.id = 'sat-drop-' + n;
+  satDrop.style.cssText = 'display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--teal);border-top:none;border-radius:0 0 7px 7px;max-height:200px;overflow-y:auto;z-index:50;box-shadow:0 8px 20px rgba(0,0,0,.12)';
+  var satCode = document.createElement('input');
+  satCode.type = 'hidden';
+  satCode.id = 'clave_sat_code-' + n;
+  var satHint = document.createElement('div');
+  satHint.className = 'hint';
+  satHint.textContent = 'Mínimo 3 caracteres para buscar en el catálogo SAT';
+  satWrap.appendChild(satInput);
+  satWrap.appendChild(satDrop);
+  fSat.appendChild(satWrap);
+  fSat.appendChild(satCode);
+  fSat.appendChild(satHint);
+  grid.appendChild(fSat);
+
+  // Descripción
+  addField(grid, 'full',
+    '<label>Descripción <span class="req">*</span></label>',
+    '<input type="text" id="desc-' + n + '" placeholder="Descripción del producto o servicio">');
+
+  // Cantidad
+  addField(grid, '',
+    '<label>Cantidad <span class="req">*</span></label>',
+    '<input type="number" id="cant-' + n + '" placeholder="1" min="0.01" step="0.01" value="1">');
+  document.querySelector && setTimeout(function(){
+    var el = document.getElementById('cant-' + n);
+    if(el)(function(nn){ el.addEventListener('input', function(){ calcItem(nn); }); })(n);
+  }, 0);
+
+  // Precio
+  addField(grid, '',
+    '<label>Precio unitario <span class="req">*</span></label>',
+    '<input type="number" id="precio-' + n + '" placeholder="0.00" min="0" step="0.01">');
+  setTimeout(function(){
+    var el = document.getElementById('precio-' + n);
+    if(el)(function(nn){ el.addEventListener('input', function(){ calcItem(nn); }); })(n);
+  }, 0);
+
+  // IVA
+  addField(grid, '',
+    '<label>IVA</label>',
+    '<select id="iva-' + n + '"><option value="0.16">16%</option><option value="0.08">8% (fronteriza)</option><option value="0">0%</option><option value="exento">Exento</option></select>');
+  setTimeout(function(){
+    var el = document.getElementById('iva-' + n);
+    if(el)(function(nn){ el.addEventListener('change', function(){ calcItem(nn); }); })(n);
+  }, 0);
+
+  // Retención IVA
+  addField(grid, '',
+    '<label>Retención IVA</label>',
+    '<select id="ret_iva-' + n + '"><option value="0">Sin retención</option><option value="0.1067">10.67%</option><option value="0.04">4%</option></select>');
+  setTimeout(function(){
+    var el = document.getElementById('ret_iva-' + n);
+    if(el)(function(nn){ el.addEventListener('change', function(){ calcItem(nn); }); })(n);
+  }, 0);
+
+  // Retención ISR
+  addField(grid, '',
+    '<label>Retención ISR</label>',
+    '<select id="ret_isr-' + n + '"><option value="0">Sin retención</option><option value="0.10">10%</option><option value="0.0125">1.25%</option></select>');
+  setTimeout(function(){
+    var el = document.getElementById('ret_isr-' + n);
+    if(el)(function(nn){ el.addEventListener('change', function(){ calcItem(nn); }); })(n);
+  }, 0);
+
+  // IEPS
+  addField(grid, '',
+    '<label>IEPS</label>',
+    '<select id="ieps-' + n + '"><option value="0">Sin IEPS</option><option value="0.08">8%</option><option value="0.265">26.5%</option><option value="0.30">30%</option></select>');
+  setTimeout(function(){
+    var el = document.getElementById('ieps-' + n);
+    if(el)(function(nn){ el.addEventListener('change', function(){ calcItem(nn); }); })(n);
+  }, 0);
+
+  // Total
+  addField(grid, '',
+    '<label>Total a pagar</label>',
+    '<input type="text" id="total-' + n + '" readonly style="background:#f0faf9;font-family:monospace;font-size:13px;font-weight:600;color:#007F76" placeholder="$0.00">');
+
+  row.appendChild(grid);
+  cont.appendChild(row);
 }
 
 function removeItem(n) {
-  var el = document.getElementById('item-'+n);
-  if(el) el.remove();
+  var el = document.getElementById('item-' + n);
+  if (el) el.remove();
 }
 
 // ── BUSCADOR CLAVE SAT (Worker Cloudflare) ─────────────────────────────────
@@ -590,13 +638,18 @@ function buscarClaveSAT(n) {
       .then(function(data){
         var items = data.data || data || [];
         if(!items.length){ drop.innerHTML='<div style="padding:8px 12px;font-size:11px;color:var(--muted)">Sin resultados</div>'; return; }
-        drop.innerHTML = items.slice(0,10).map(function(item){
+                drop.innerHTML = '';
+        items.slice(0,10).forEach(function(item){
           var code = item.Value||item.value||item.code||'';
           var desc = item.Name||item.name||item.description||'';
-          return '<div onclick="selClaveSAT('+n+',''+code+'',''+desc+'')" style="padding:8px 12px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s" onmouseover="this.style.background='var(--lite)'" onmouseout="this.style.background='#fff'">'
-            +'<span style="font-family:monospace;font-weight:700;color:var(--teal2);font-size:11px">'+code+'</span>'
-            +' <span style="color:var(--text)">'+desc+'</span></div>';
-        }).join('');
+          var div = document.createElement('div');
+          div.style.cssText = 'padding:8px 12px;font-size:12px;cursor:pointer;border-bottom:1px solid #E4E8F0';
+          div.innerHTML = '<span style="font-family:monospace;font-weight:700;color:#007F76;font-size:11px">'+code+'</span> '+desc;
+          div.addEventListener('mouseover', function(){ this.style.background='#F0FAF9'; });
+          div.addEventListener('mouseout',  function(){ this.style.background='#fff'; });
+          div.addEventListener('click', function(){ selClaveSAT(n, code, desc); });
+          drop.appendChild(div);
+        });
       })
       .catch(function(){
         drop.innerHTML='<div style="padding:8px 12px;font-size:11px;color:var(--red)">Error al buscar. Verifica la conexi\u00f3n.</div>';
