@@ -260,13 +260,12 @@ footer a{color:var(--teal);text-decoration:none}
     <div class="f full">
       <label>Correo del emisor <span class="req">*</span></label>
       <input type="email" id="email_emisor" placeholder="correo@empresa.com">
-      <div class="hint">Recibirá el XML y PDF de la factura.</div>
-      <div class="emsg" id="e-email_emisor">Correo inválido</div>
+      <div class="hint" style="display:flex;align-items:flex-start;gap:7px;background:#F0FAF9;border:1px solid #00A99D;border-radius:6px;padding:8px 10px;margin-top:4px;color:#007F76;font-size:12px;line-height:1.5"><span style="font-size:16px;flex-shrink:0">📧</span><span><strong>A este correo se enviará tu factura (PDF y XML)</strong> en cuanto sea timbrada por nuestro equipo. Asegúrate de que sea el correo fiscal correcto.</span></div>      <div class="emsg" id="e-email_emisor">Correo inválido</div>
     </div>
     <div class="f full">
       <label>WhatsApp del emisor <span class="req">*</span></label>
       <input type="tel" id="wa_emisor" placeholder="2221234567" maxlength="10" oninput="this.value=this.value.replace(/\D/g,'')">
-      <div class="hint">10 dígitos. Para enviar el CFDI por WhatsApp.</div>
+      <div class="hint" style="display:flex;align-items:flex-start;gap:7px;background:#F0FAF9;border:1px solid #00A99D;border-radius:6px;padding:8px 10px;margin-top:4px;color:#007F76;font-size:12px;line-height:1.5"><span style="font-size:16px;flex-shrink:0">💬</span><span><strong>A este número recibirás notificaciones en tiempo real</strong> sobre el estado de tu factura: confirmación de recepción, avance del proceso y aviso de entrega.</span></div>
       <div class="emsg" id="e-wa_emisor">10 dígitos requeridos</div>
     </div>
   </div>
